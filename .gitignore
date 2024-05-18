@@ -33,4 +33,4 @@
 
 .vscode
 output
-build
+build/*.o
