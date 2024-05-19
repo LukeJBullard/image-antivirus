@@ -43,7 +43,8 @@ int main(int argc, char* argv[])
 
     FILE *fp;
 
-    int output_format = SPNG_FMT_RGBA16;
+    int output_format = SPNG_FMT_PNG;
+    int encode_format = SPNG_FMT_PNG;
     int output_flags = SPNG_DECODE_TRNS & SPNG_DECODE_GAMMA;
 
     int encode_flags = SPNG_ENCODE_FINALIZE;
@@ -51,7 +52,7 @@ int main(int argc, char* argv[])
     if (!is_directory("output") || !exists("output"))
     {
         create_directory("output");
-    } else if (exists("output"))
+    } else if (exists("output") && !is_directory("output"))
     {
         cerr << "Error: 'output' already exists and is not a directory" << endl;
         return 1;
@@ -227,9 +228,10 @@ int main(int argc, char* argv[])
             return 1;
         }
 
-        if (spng_encode_image(ctx_out, output_buffer, output_size, output_format, encode_flags))
+        int encode_image_error = spng_encode_image(ctx_out, output_buffer, output_size, encode_format, encode_flags);
+        if (encode_image_error != 0)
         {
-            cerr << "Error: Cannot encode output image" << endl;
+            cerr << "Error: Cannot encode output image. spng error code: " << encode_image_error << endl;
             return 1;
         }
 
